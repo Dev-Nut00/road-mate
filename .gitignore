@@ -1,0 +1,36 @@
+# General
+.DS_Store
+Thumbs.db
+*.log
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+venv/
+env/
+.venv/
+.env
+.env.*
+
+# VS Code
+.vscode/
+*.code-workspace
+
+# Django
+*.sqlite3
+media/
+staticfiles/
+static/
+
+# Frontend
+frontend/node_modules/
+frontend/.next/
+frontend/.env.local
+frontend/.env
+frontend/build/
+frontend/dist/
+frontend/out/
+
+# Docker
+.docker_temp/

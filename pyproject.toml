@@ -1,0 +1,15 @@
+[tool.pytest.ini_options]
+minversion = "6.0"
+addopts = "--ds=config.settings.dev"
+python_files = "tests.py test_*.py *_tests.py"
+
+[tool.black]
+line-length = 88
+target-version = ['py312']
+
+[tool.isort]
+profile = "black"
+line_length = 88
+
+[tool.ruff]
+line-length = 88
