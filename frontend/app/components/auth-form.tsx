@@ -47,8 +47,6 @@ export default function AuthForm({ onLoginSuccess }: { onLoginSuccess: (username
                 }
 
                 if (!passwordRegex.test(password)) {
-                    // Just showing general error as per requirement or specific?
-                    // Let's match the required error message style roughly.
                     toast.error("비밀번호 형식이 올바르지 않습니다. (8~16자 영문, 숫자, 특수문자)");
                     return;
                 }
@@ -61,6 +59,13 @@ export default function AuthForm({ onLoginSuccess }: { onLoginSuccess: (username
                     address
                 });
                 toast.success("회원가입 성공! 로그인해주세요.");
+
+                // Reset form and switch to login
+                setUsername("");
+                setPassword("");
+                setName("");
+                setPhone("");
+                setAddress("");
                 setIsLogin(true);
             }
         } catch (error: any) {
@@ -77,6 +82,15 @@ export default function AuthForm({ onLoginSuccess }: { onLoginSuccess: (username
                 toast.error("오류 발생: " + (detail || error.message));
             }
         }
+    };
+
+    const toggleMode = () => {
+        setIsLogin(!isLogin);
+        setUsername("");
+        setPassword("");
+        setName("");
+        setPhone("");
+        setAddress("");
     };
 
     return (
@@ -161,7 +175,7 @@ export default function AuthForm({ onLoginSuccess }: { onLoginSuccess: (username
 
                 <div className="mt-4 text-center">
                     <button
-                        onClick={() => setIsLogin(!isLogin)}
+                        onClick={toggleMode}
                         type="button"
                         className="text-sm text-blue-600 hover:underline"
                     >
