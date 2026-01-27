@@ -74,11 +74,16 @@ jobs:
             echo "POSTGRES_DB=${{ secrets.DATABASE_NAME }}" >> .env.prod
             echo "POSTGRES_USER=${{ secrets.DATABASE_USER }}" >> .env.prod
             echo "POSTGRES_PASSWORD=${{ secrets.DATABASE_PASSWORD }}" >> .env.prod
+            echo "NICEPAY_CLIENT_KEY=${{ secrets.NICEPAY_CLIENT_KEY }}" >> .env.prod
+            echo "NICEPAY_SECRET_KEY=${{ secrets.NICEPAY_SECRET_KEY }}" >> .env.prod
 
             # 4. Docker Compose로 재배포
             # 기존 컨테이너 중지 및 최신 이미지 빌드 후 실행 (환경변수 파일 명시)
             docker-compose -f docker-compose.prod.yml down
             docker-compose -f docker-compose.prod.yml --env-file .env.prod up -d --build
+            
+            # 5. 데이터베이스 마이그레이션 실행 (중요)
+            docker-compose -f docker-compose.prod.yml exec -T backend python manage.py migrate
             
             # 5. 미사용 이미지 정리 (공간 확보)
             docker image prune -f

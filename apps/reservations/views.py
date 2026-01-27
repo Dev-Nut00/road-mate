@@ -102,5 +102,48 @@ class ReservationViewSet(viewsets.ModelViewSet):
              return Response({'error': 'Only pending reservations can be rejected.'}, status=status.HTTP_400_BAD_REQUEST)
              
         reservation.status = Reservation.Status.CANCELED # Or REJECTED if we had that state
-        reservation.save()
         return Response({'status': 'rejected'})
+
+    @action(detail=True, methods=['post'], url_path='payment/approve')
+    def approve_payment(self, request, pk=None):
+        reservation = self.get_object()
+        
+        # 1. Validation
+        if reservation.status != Reservation.Status.PENDING:
+            return Response({'error': 'Only PENDING reservations can be paid.'}, status=status.HTTP_400_BAD_REQUEST)
+        
+        tid = request.data.get('tid')
+        order_id = request.data.get('orderId')
+        amount = request.data.get('amount')
+        
+        if not all([tid, order_id, amount]):
+            return Response({'error': 'Missing payment data'}, status=status.HTTP_400_BAD_REQUEST)
+            
+        # Verify Amount
+        if int(amount) != reservation.price_total:
+             return Response({'error': 'Payment amount mismatch'}, status=status.HTTP_400_BAD_REQUEST)
+
+        # 2. Call NicePay API
+        from .utils import NicePayClient
+        from .models import Payment
+        
+        client = NicePayClient()
+        result = client.approve(tid, amount, order_id)
+        
+        # 3. Handle Result
+        if result.get('resultCode') == '0000':
+            # Success
+            Payment.objects.create(
+                reservation=reservation,
+                tid=tid,
+                order_id=order_id,
+                amount=amount,
+                status=Payment.Status.PAID,
+                paid_at=result.get('authDate') # Requires parsing? NicePay returns string. Simplified for now.
+            )
+            reservation.status = Reservation.Status.CONFIRMED
+            reservation.save()
+            return Response({'status': 'paid', 'data': result})
+        else:
+            # Failure
+            return Response({'error': 'Payment failed', 'detail': result.get('resultMsg')}, status=status.HTTP_400_BAD_REQUEST)

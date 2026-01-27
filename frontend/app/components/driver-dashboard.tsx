@@ -185,31 +185,13 @@ export default function DriverDashboard({ user }: { user: any }) {
         setSelectedSpot(parking);
     };
 
-    const handleConfirmReservation = async (reservationData: any) => {
-        try {
-            await createReservation(reservationData);
-            setReservationDialogOpen(false);
-            toast.success("예약이 요청되었습니다! (결제 대기중)");
-            setActiveTab("reservations");
-        } catch (error: any) {
-            console.error(error);
-            const data = error.response?.data;
-            let msg = "오류가 발생했습니다.";
-
-            if (data) {
-                if (typeof data === 'string') msg = data;
-                else if (data.detail) msg = data.detail;
-                else if (Array.isArray(data.non_field_errors) && data.non_field_errors.length > 0) msg = data.non_field_errors[0];
-                else {
-                    // Try to find the first error message from field errors
-                    const keys = Object.keys(data);
-                    if (keys.length > 0) {
-                        const firstError = data[keys[0]];
-                        msg = Array.isArray(firstError) ? `${keys[0]}: ${firstError[0]}` : String(firstError);
-                    }
-                }
-            }
-            toast.error("예약 실패: " + msg);
+    const handleReservationSuccess = () => {
+        // Dialog handles creation and payment now
+        setActiveTab("reservations");
+        // Force refresh if needed, but changing tab usually works
+        // If already on reservations, we might want to reload
+        if (activeTab === 'reservations') {
+            window.location.reload();
         }
     };
 
@@ -438,7 +420,7 @@ export default function DriverDashboard({ user }: { user: any }) {
                 open={reservationDialogOpen}
                 onOpenChange={setReservationDialogOpen}
                 parking={reservingParking}
-                onConfirm={handleConfirmReservation}
+                onSuccess={handleReservationSuccess}
             />
 
             <SpaceDetailDialog

@@ -151,4 +151,12 @@ export const login = async (data: any) => {
     return response.data;
 };
 
+export const approvePayment = async (data: { tid: string; orderId: string; amount: number; reservationId: number }) => {
+    // Note: Endpoint depends on how backend exposes it. 
+    // I implemented: POST /reservations/{pk}/payment/approve/
+    const { reservationId, ...payload } = data;
+    const response = await api.post(`/reservations/${reservationId}/payment/approve/`, payload);
+    return response.data;
+};
+
 export default api;
