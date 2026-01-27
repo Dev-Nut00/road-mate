@@ -48,7 +48,7 @@ jobs:
         working-directory: ./frontend
         env:
           NEXT_PUBLIC_API_URL: http://roadmate.p-e.kr/api
-          NEXT_PUBLIC_NAVER_MAP_CLIENT_ID: temp_id
+          NEXT_PUBLIC_NAVER_MAP_CLIENT_ID: fxj4dbsnm9
         run: npm run build
 
   # 2. 배포 단계 (빌드 성공 시 실행)
