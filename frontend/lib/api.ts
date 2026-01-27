@@ -1,6 +1,8 @@
 import axios from 'axios';
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
+// 하드코딩으로 강제 설정 (배포 확실하게 하기 위함)
+const API_URL = 'http://roadmate.p-e.kr/api';
+// const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
 
 const api = axios.create({
     baseURL: API_URL,
