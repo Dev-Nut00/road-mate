@@ -20,9 +20,9 @@ from common.views import HealthCheckView
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', include('apps.accounts.urls')),
-    path('', include('apps.spaces.urls')),
-    path('', include('apps.reservations.urls')),
+    path('api/auth/', include('apps.accounts.urls')), # Was at root, now under api/auth/
+    path('api/spaces/', include('apps.spaces.urls')), # Was at root, now under api/spaces/
+    path('api/reservations/', include('apps.reservations.urls')), # Was at root, now under api/reservations/
     path('health', HealthCheckView.as_view()),
 ]
 
