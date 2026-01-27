@@ -11,10 +11,10 @@ router = DefaultRouter()
 router.register(r'me/vehicles', VehicleViewSet, basename='vehicle')
 
 urlpatterns = [
-    path('auth/register/', RegisterView.as_view(), name='register'),
-    path('auth/login/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
-    path('auth/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
-    path('auth/profile/', ProfileView.as_view(), name='profile'),
+    path('register/', RegisterView.as_view(), name='register'),
+    path('login/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
+    path('refresh/', TokenRefreshView.as_view(), name='token_refresh'),
+    path('profile/', ProfileView.as_view(), name='profile'),
     path('me/host-only/', views.HostOnlyView.as_view()),
     path('me/driver-only/', views.DriverOnlyView.as_view()),
 ] + router.urls
