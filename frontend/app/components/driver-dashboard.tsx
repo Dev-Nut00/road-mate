@@ -59,7 +59,8 @@ export default function DriverDashboard({ user }: { user: any }) {
         const fetchSpaces = async () => {
             try {
                 const data = await getSpaces();
-                setSpaces(data);
+                // Ensure data is an array
+                setSpaces(Array.isArray(data) ? data : []);
             } catch (error) {
                 console.error("Failed to fetch spaces", error);
                 toast.error("주차장 목록을 불러오는데 실패했습니다.");
