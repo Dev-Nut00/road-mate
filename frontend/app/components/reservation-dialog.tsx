@@ -278,12 +278,7 @@ export function ReservationDialog({ open, onOpenChange, parking, onSuccess }: Re
                             disabled={!date || !startTime || (!isDayPass && !duration) || !carNumber || processing}
                             className={cn(processing ? "opacity-70" : "")}
                         >
-                            {processing ? "처리중..." : (
-                                <span className="flex items-center">
-                                    <CreditCard className="w-4 h-4 mr-2" />
-                                    결제 및 예약
-                                </span>
-                            )}
+                            {processing ? "처리중..." : "예약하기"}
                         </Button>
                     </div>
                 </div>
