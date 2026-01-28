@@ -30,10 +30,12 @@ export default function RootLayout({
         suppressHydrationWarning
         className={`${geistSans.variable} ${geistMono.variable}`}
       >
+        {/* Temporarily disabled Naver Map script
         <Script
           strategy="beforeInteractive"
           src={`https://oapi.map.naver.com/openapi/v3/maps.js?ncpClientId=${process.env.NEXT_PUBLIC_NAVER_MAP_CLIENT_ID}&submodules=geocoder`}
         />
+        */}
         {children}
         <Toaster />
       </body>
