@@ -1,13 +1,12 @@
-import { getVehicles, createReservation, approvePayment } from "@/lib/api";
+import { getVehicles, createReservation } from "@/lib/api";
 import { Button } from "@/app/components/ui/button";
 import { Label } from "@/app/components/ui/label";
 import { ParkingSpot } from "./parking-card";
-import { MapPin, Calendar as CalendarIcon, CreditCard } from "lucide-react";
+import { MapPin, Calendar as CalendarIcon } from "lucide-react";
 import { useState } from "react";
 import { format } from "date-fns";
 import * as React from "react"
 import { cn } from "@/lib/utils"
-import Script from "next/script";
 import { toast } from "sonner";
 
 // Simple UI components
@@ -94,6 +93,7 @@ export function ReservationDialog({ open, onOpenChange, parking, onSuccess }: Re
         totalPrice = duration ? Math.floor(selectedProduct.price * parseFloat(duration)) : 0;
     }
 
+
     const handlePaymentAndReserve = async () => {
         if (!date || !startTime || !carNumber) return;
         if (!isDayPass && !duration) return;
@@ -115,60 +115,14 @@ export function ReservationDialog({ open, onOpenChange, parking, onSuccess }: Re
         };
 
         try {
-            // 1. Create Reservation (PENDING)
-            const resData = await createReservation(reservationPayload);
-            const reservationId = resData.id;
-
-            // 2. Trigger NicePay
-            // We use setTimeout to ensure Script is loaded, or assume it is.
-            if (!window.NicePay) {
-                toast.error("결제 모듈을 불러오는 중입니다. 잠시 후 다시 시도해주세요.");
-                setProcessing(false);
-                return;
-            }
-
-            window.NicePay.requestPay({
-                clientId: "S2_2c2e2dd56fbd4f74833cf7a857702a29", // TEST KEY
-                method: "card",
-                orderId: `ORD-${Date.now()}-${reservationId}`,
-                amount: totalPrice,
-                goodsName: parking.title,
-                returnUrl: `${window.location.origin}/payment/callback`, // Required for redirection mode
-                fnError: (err: any) => {
-                    console.error("Payment Error", err);
-                    toast.error("결제 중 오류가 발생했습니다: " + err.errorMsg);
-                    setProcessing(false);
-                }
-            }, {
-                onSuccess: async (authResult: any) => {
-                    // 3. Server Approval (Popup/Layer mode callback)
-                    try {
-                        await approvePayment({
-                            reservationId,
-                            tid: authResult.tid,
-                            orderId: authResult.orderId,
-                            amount: parseInt(authResult.amount)
-                        });
-                        toast.success("예약 및 결제가 완료되었습니다!");
-                        onSuccess();
-                        onOpenChange(false);
-                    } catch (e: any) {
-                        toast.error("결제 승인 실패: " + (e.response?.data?.error || e.message));
-                    } finally {
-                        setProcessing(false);
-                    }
-                },
-                onClose: () => {
-                    setProcessing(false);
-                }
-            });
-
-            // Note: If NicePay redirects (mobile usually), the state will be lost.
-            // For now assuming PC/Layer Popup mode works with the provided script.
-
+            await createReservation(reservationPayload);
+            toast.success("예약이 완료되었습니다!");
+            onSuccess();
+            onOpenChange(false);
         } catch (e: any) {
             console.error(e);
             toast.error("예약 생성 실패: " + (e.response?.data?.detail || e.message));
+        } finally {
             setProcessing(false);
         }
     };
@@ -180,7 +134,6 @@ export function ReservationDialog({ open, onOpenChange, parking, onSuccess }: Re
 
     return (
         <>
-            <Script src="https://pay.nicepay.co.kr/v1/js/" strategy="lazyOnload" />
             <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
                 <div className="bg-white rounded-lg shadow-lg w-full max-w-md p-6 m-4 animate-in fade-in zoom-in-95 duration-200 overflow-y-auto max-h-[90vh]">
                     <div className="flex justify-between items-center mb-4">
