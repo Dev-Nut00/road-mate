@@ -23,8 +23,9 @@ export default function HostDashboard({ user }: { user: any }) {
                 getSpaces({ mine: true }),
                 getHostReservations()
             ]);
-            setMySpaces(spaces);
-            setIncomingReservations(reservations);
+            // Ensure data is an array
+            setMySpaces(Array.isArray(spaces) ? spaces : []);
+            setIncomingReservations(Array.isArray(reservations) ? reservations : []);
         } catch (e) {
             console.error(e);
             toast.error("데이터를 불러오는 데 실패했습니다.");
@@ -50,7 +51,7 @@ export default function HostDashboard({ user }: { user: any }) {
             toast.success(currentStatus ? "주차장이 비활성화되었습니다." : "주차장이 활성화되었습니다.");
             // Refresh specific query not full reload ideally, but keeping simple
             const spaces = await getSpaces({ mine: true });
-            setMySpaces(spaces);
+            setMySpaces(Array.isArray(spaces) ? spaces : []);
         } catch (error) {
             console.error(error);
             toast.error("상태 변경에 실패했습니다.");
