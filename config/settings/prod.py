@@ -11,6 +11,12 @@ CORS_ALLOWED_ORIGINS = [
 ]
 CORS_ALLOW_CREDENTIALS = True
 
+# CSRF trusted origins (required for POST requests)
+CSRF_TRUSTED_ORIGINS = [
+    'http://roadmate.p-e.kr',
+    'http://3.34.190.189',
+]
+
 DATABASES = {
     'default': env.db('DATABASE_URL', default='postgres://postgres:postgres@db:5432/road_mate')
 }
